@@ -36,6 +36,12 @@ const router = createRouter({
             meta: { requiresAuth: true, layout: "main", title: "Mein Profil" },
         },
         {
+            path: "/settings/general",
+            name: "SettingsGeneral",
+            component: () => import("@/pages/SettingsGeneral.vue"),
+            meta: { requiresAuth: true, layout: "main", title: "Einstellungen > Allgemein" },
+        },
+        {
             path: "/settings/licenses",
             name: "SettingsLicenses",
             component: () => import("@/pages/SettingsLicenses.vue"),

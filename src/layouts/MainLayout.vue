@@ -217,9 +217,9 @@ onBeforeUnmount(() => {
 const navSections: NavSection[] = [
     { title: 'Übersicht', items: [{ label: 'Dashboard', icon: LayoutDashboard, to: 'Dashboard' }] },
     { title: 'Verwaltung', items: [{ label: 'Benutzer', icon: Users, to: 'Users' }, { label: 'Rollen', icon: Shield, to: 'Roles' }] },
-    { title: 'Content', items: [{ label: 'Seiten', icon: FileText, requiredModule: 'cms' }, { label: 'Blog', icon: PenTool, requiredModule: 'cms' }] },
-    { title: 'Compliance', items: [{ label: 'Audit-Logs', icon: ClipboardList, requiredModule: 'security' }, { label: 'Datenschutz', icon: Lock, requiredModule: 'security' }] },
-    { title: 'Einstellungen', items: [{ label: 'Lizenzen', icon: Award, to: 'SettingsLicenses' }] },
+    // { title: 'Content', items: [{ label: 'Seiten', icon: FileText, requiredModule: 'cms' }, { label: 'Blog', icon: PenTool, requiredModule: 'cms' }] },
+    // { title: 'Compliance', items: [{ label: 'Audit-Logs', icon: ClipboardList, requiredModule: 'security' }, { label: 'Datenschutz', icon: Lock, requiredModule: 'security' }] },
+    { title: 'Einstellungen', items: [{ label: 'Allgemein', icon: Settings, to: 'SettingsGeneral' }, { label: 'Lizenzen', icon: Award, to: 'SettingsLicenses' }] },
 ]
 
 const desktopSidebarWidth = computed(() => (collapsed.value ? 'lg:pl-20' : 'lg:pl-64'))
@@ -271,8 +271,8 @@ const openProfile = () => {
     sidebarOpen.value = false
 }
 
-const openSettingsLicenses = () => {
-    router.push({ name: 'SettingsLicenses' })
+const openSettingsGeneral = () => {
+    router.push({ name: 'SettingsGeneral' })
     sidebarOpen.value = false
 }
 </script>
@@ -312,8 +312,7 @@ const openSettingsLicenses = () => {
                                     isItemActive(item)
                                         ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                                         : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white',
-                                ]"
-                                @click="navigateTo(item)">
+                                ]" @click="navigateTo(item)">
                                 <component :is="item.icon" class="h-5 w-5 shrink-0"
                                     :class="isItemActive(item) ? 'text-emerald-600 dark:text-emerald-400' : ''" />
                                 <span v-if="!collapsed">{{ item.label }}</span>
@@ -325,37 +324,26 @@ const openSettingsLicenses = () => {
 
             <div class="border-t border-zinc-200 p-3 dark:border-zinc-800">
                 <button
-                    class="flex w-full items-center rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-600 transition-all duration-200 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
-                    :class="collapsed ? 'justify-center' : 'gap-3'"
-                    @click="openSettingsLicenses">
-                    <Settings class="h-5 w-5" />
-                    <span v-if="!collapsed">Einstellungen</span>
-                </button>
-
-                <button
                     class="mt-1 flex w-full items-center rounded-xl px-3 py-2.5 text-sm font-medium text-red-600 transition-all duration-200 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-                    :class="collapsed ? 'justify-center' : 'gap-3'"
-                    @click="requestLogout">
+                    :class="collapsed ? 'justify-center' : 'gap-3'" @click="requestLogout">
                     <LogOut class="h-5 w-5" />
                     <span v-if="!collapsed">Abmelden</span>
                 </button>
 
-                <button
-                    v-if="!collapsed"
+                <button v-if="!collapsed"
                     class="mt-3 flex w-full items-center gap-3 rounded-xl bg-zinc-50 p-3 text-left transition-colors hover:bg-zinc-100 dark:bg-zinc-800/50 dark:hover:bg-zinc-800"
                     @click="openProfile">
-                    <div
-                        v-if="currentUser?.avatar_url"
+                    <div v-if="currentUser?.avatar_url"
                         class="h-10 w-10 overflow-hidden rounded-full border border-zinc-300 dark:border-zinc-700">
                         <img :src="currentUser.avatar_url" alt="Profilbild" class="h-full w-full object-cover" />
                     </div>
-                    <div
-                        v-else
+                    <div v-else
                         class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-zinc-400 to-zinc-600 text-sm font-semibold text-white">
                         {{ userInitials }}
                     </div>
                     <div class="min-w-0 flex-1">
-                        <p class="truncate text-sm font-medium text-zinc-900 dark:text-white">{{ currentUser?.name || 'Benutzerprofil' }}</p>
+                        <p class="truncate text-sm font-medium text-zinc-900 dark:text-white">{{ currentUser?.name ||
+                            'Benutzerprofil' }}</p>
                         <p class="truncate text-xs text-zinc-500 dark:text-zinc-400">{{ userRoleLabel }}</p>
                     </div>
                 </button>
@@ -383,23 +371,20 @@ const openSettingsLicenses = () => {
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <div
-                        class="hidden items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold md:flex"
+                    <div class="hidden items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold md:flex"
                         :class="sessionCritical
                             ? 'border-amber-500/40 bg-amber-500/10 text-amber-500'
                             : 'border-zinc-700 bg-zinc-800/50 text-zinc-300'">
                         <span>Session {{ sessionText }}</span>
                         <button
                             class="inline-flex items-center gap-1 rounded-md border border-emerald-500/40 px-2 py-1 text-emerald-400 transition-colors hover:bg-emerald-500/10 disabled:opacity-50"
-                            :disabled="refreshing"
-                            @click="refreshSession">
+                            :disabled="refreshing" @click="refreshSession">
                             <TimerReset class="h-3.5 w-3.5" />
                             <span>{{ refreshing ? '...' : 'Refresh' }}</span>
                         </button>
                     </div>
 
-                    <ThemeSwitcher
-                        v-slot="{ isDark }"
+                    <ThemeSwitcher v-slot="{ isDark }"
                         class="flex h-10 w-10 items-center justify-center rounded-xl text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white">
                         <Sun v-if="isDark" class="h-5 w-5" />
                         <Moon v-else class="h-5 w-5" />
@@ -419,17 +404,16 @@ const openSettingsLicenses = () => {
                     <button
                         class="flex items-center gap-2 rounded-xl p-1.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
                         @click="openProfile">
-                        <div
-                            v-if="currentUser?.avatar_url"
+                        <div v-if="currentUser?.avatar_url"
                             class="h-8 w-8 overflow-hidden rounded-full border border-zinc-300 dark:border-zinc-700">
                             <img :src="currentUser.avatar_url" alt="Profilbild" class="h-full w-full object-cover" />
                         </div>
-                        <div
-                            v-else
+                        <div v-else
                             class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 text-sm font-semibold text-white">
                             {{ userInitials.charAt(0) }}
                         </div>
-                        <span class="hidden text-sm font-medium text-zinc-700 dark:text-zinc-300 md:block">{{ userShortName }}</span>
+                        <span class="hidden text-sm font-medium text-zinc-700 dark:text-zinc-300 md:block">{{
+                            userShortName }}</span>
                     </button>
                 </div>
             </header>
@@ -503,8 +487,7 @@ const openSettingsLicenses = () => {
             <div class="relative w-full max-w-sm rounded-2xl border border-zinc-700 bg-zinc-900 p-5 shadow-2xl">
                 <div class="mb-3 flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-white">Abmelden?</h3>
-                    <button
-                        class="rounded-lg p-1 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+                    <button class="rounded-lg p-1 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
                         @click="cancelLogout">
                         <X class="h-4 w-4" />
                     </button>
